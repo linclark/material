@@ -349,7 +349,7 @@ function MdDialogProvider($$interimElementProvider) {
   function advancedDialogOptions($mdDialog, $mdTheming) {
     return {
       template: [
-        '<md-dialog md-theme="{{ dialog.theme }}" aria-label="{{ dialog.ariaLabel }}" tabIndex="-1">',
+        '<md-dialog md-theme="{{ dialog.theme }}" tabIndex="-1">',
           '<md-content role="document" tabIndex="0">',
             '<h2>{{ dialog.title }}</h2>',
             '<p>{{ dialog.content }}</p>',
@@ -431,7 +431,7 @@ function MdDialogProvider($$interimElementProvider) {
         elementToFocus = element.find('md-content');
       }
 
-      configureAria(element.find('md-dialog'), role);
+      configureAria(element.find('md-dialog'), role, options);
 
       document.addEventListener('focus', trapFocus, true);
 
@@ -520,7 +520,7 @@ function MdDialogProvider($$interimElementProvider) {
     /**
      * Inject ARIA-specific attributes appropriate for Dialogs
      */
-    function configureAria(element, role) {
+    function configureAria(element, role, options) {
 
       element.attr({
         'role': role
@@ -535,11 +535,16 @@ function MdDialogProvider($$interimElementProvider) {
       dialogContent.attr('id', dialogId);
       element.attr('aria-describedby', dialogId);
 
-      $mdAria.expectAsync(element, 'aria-label', function() {
-        var words = dialogContent.text().split(/\s+/);
-        if (words.length > 3) words = words.slice(0,3).concat('...');
-        return words.join(' ');
-      });
+      if (options.ariaLabel) {
+        $mdAria.expect(element, 'aria-label', options.ariaLabel);
+      }
+      else {
+        $mdAria.expectAsync(element, 'aria-label', function() {
+          var words = dialogContent.text().split(/\s+/);
+          if (words.length > 3) words = words.slice(0,3).concat('...');
+          return words.join(' ');
+        });
+      }
     }
     /**
      * Utility function to filter out raw DOM nodes
