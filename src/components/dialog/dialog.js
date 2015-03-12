@@ -287,6 +287,9 @@ function MdDialogDirective($$rAF, $mdTheming) {
  *     close it. Default true.
  *   - `escapeToClose` - `{boolean=}`: Whether the user can press escape to close the dialog.
  *     Default true.
+ *   - `focusOnOpen` - `{boolean=}`: An option to override focus behavior on open. Only disable if
+ *     focusing some other way, as focus management is required for dialogs to be accessible.
+ *     Defaults to true.
  *   - `controller` - `{string=}`: The controller to associate with the dialog. The controller
  *     will be injected with the local `$mdDialog`, which passes along a scope for the dialog.
  *   - `locals` - `{object=}`: An object containing key/value pairs. The keys will be used as names
@@ -389,6 +392,7 @@ function MdDialogProvider($$interimElementProvider) {
       clickOutsideToClose: false,
       escapeToClose: true,
       targetEvent: null,
+      focusOnOpen: true,
       disableParentScroll: true,
       transformTemplate: function(template) {
         return '<div class="md-dialog-container">' + template + '</div>';
@@ -467,7 +471,10 @@ function MdDialogProvider($$interimElementProvider) {
           };
           element.on('click', options.dialogClickOutsideCallback);
         }
-        elementToFocus.focus();
+
+        if (options.focusOnOpen) {
+          elementToFocus.focus();
+        }
       });
 
 
